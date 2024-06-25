@@ -1,0 +1,43 @@
+echo "Usage: buildScript programId tokenAddress" 
+
+echo "*************************************"
+echo "ProgramId is $1"
+echo "*************************************"
+echo "*************************************"
+echo "NATIX token mint address is $2"
+echo "*************************************"
+
+solana-keygen new -o programAccount.json --force
+
+echo "*************************************"
+echo "Program Account Priv:"
+
+cat programAccount.json
+echo ""
+echo "*************************************"
+
+echo "*************************************"
+echo "Program Auth and Payer:"
+PROGRAMAUTH=`solana config get | grep Path | cut -f3 -d ' '`
+cat $PROGRAMAUTH
+echo ""
+echo "*************************************"
+
+solana-keygen new -o stakeAccount.json --force
+
+echo "*************************************"
+echo "Stake Account Key Priv:"
+
+cat stakeAccount.json
+echo ""
+echo "*************************************"
+
+PUBLICKEY=`solana-keygen pubkey stakeAccount.json`
+
+echo "*************************************"
+echo "Stake Account token addres is:"
+spl-token create-account --owner $PUBLICKEY $2 --fee-payer $PROGRAMAUTH
+
+echo "*************************************"
+
+
