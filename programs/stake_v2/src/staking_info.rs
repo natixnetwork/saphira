@@ -57,4 +57,6 @@ pub struct Config {
     pub vote_period_based_on_compound: u16,
     pub forfeit_allow_burn: bool,
     pub forfeit_allow_transfer: bool,
+    pub stake_account: Option<String>,
+    pub program_account: Option<String>
 }

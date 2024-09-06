@@ -100,6 +100,36 @@ pub fn process_instruction<'a>(
 
     let pool = deserialize(program_account);
 
+    let stake_defined = &pool.config.stake_account;
+    let program_defined = &pool.config.program_account;
+
+
+    msg!(
+        "Checking stake account {:?}, {:?}",
+        stake_account.key,
+        stake_defined
+    );
+
+    if stake_defined.is_some() {
+        let account = Pubkey::from_str(stake_defined.clone().unwrap().as_str()).map_err(|_| ProgramError::InvalidArgument)?;       
+        if *stake_account.key != account {
+            return Err(ProgramError::InvalidArgument);
+        }
+    }
+
+    msg!(
+        "Checking program account {:?}, {:?}",
+        program_account.key,
+        program_defined
+    );
+
+    if program_defined.is_some() {
+        let account = Pubkey::from_str(program_defined.clone().unwrap().as_str()).map_err(|_| ProgramError::InvalidArgument)?;        
+        if *program_account.key != account {
+            return Err(ProgramError::InvalidArgument);
+        }
+    }
+
     let data = Data::try_from_slice(instruction_data).map_err(|_| ProgramError::InvalidArgument)?;
 
     let instruction = data.instruction;

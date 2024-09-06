@@ -36,8 +36,14 @@ pub fn change_interest_rate<'a>(
 
     let clock = Clock::get()?;
 
+    let amount = (rate as f64).div(100.0);
+
+    if amount > 1f64 || amount < 0f64 {
+        return Err(ProgramError::InvalidArgument);
+    }
+
     pool.interests.push(Rate {
-        amount: (rate as f64).div(100.0),
+        amount: amount,
         time: clock.unix_timestamp
     });
 

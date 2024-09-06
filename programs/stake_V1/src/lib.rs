@@ -45,6 +45,8 @@ use crate::withdraw::withdraw;
 use crate::ProgramInstruction::{Stake, Withdraw};
 use borsh::{BorshDeserialize, BorshSerialize};
 use burn_or_transfer::burn_or_transfer;
+use get_natix_token_id::get_natix_token_id;
+use get_natix_token_mint::get_natix_token_mint;
 use pause::pause;
 use resume::resume;
 use solana_program::account_info::next_account_info;
@@ -82,6 +84,10 @@ pub fn process_instruction<'a>(
         return Err(ProgramError::IllegalOwner);
     }
 
+    if *token_program_account.key != get_natix_token_id() {
+        return Err(ProgramError::InvalidArgument);
+    }
+
     let stake_token_account = TokenAccount::unpack(&stake_account.data.borrow_mut())?;
     let (pda, _bump_seed) = Pubkey::find_program_address(&[b"NATIX"], program_id);
     msg!(
@@ -93,7 +99,46 @@ pub fn process_instruction<'a>(
         return Err(ProgramError::InvalidArgument);
     }
 
+    msg!(
+        "Checking stake account mint {:?}, {:?}",
+        stake_token_account.mint,
+        get_natix_token_mint()
+    );
+    if stake_token_account.mint != get_natix_token_mint() {
+        return Err(ProgramError::InvalidArgument);
+    }    
+
     let pool = deserialize(program_account);
+
+    let stake_defined = &pool.config.stake_account;
+    let program_defined = &pool.config.program_account;
+
+
+    msg!(
+        "Checking stake account {:?}, {:?}",
+        stake_account.key,
+        stake_defined
+    );
+
+    if stake_defined.is_some() {
+        let account = Pubkey::from_str(stake_defined.clone().unwrap().as_str()).map_err(|_| ProgramError::InvalidArgument)?;       
+        if *stake_account.key != account {
+            return Err(ProgramError::InvalidArgument);
+        }
+    }
+
+    msg!(
+        "Checking program account {:?}, {:?}",
+        program_account.key,
+        program_defined
+    );
+
+    if program_defined.is_some() {
+        let account = Pubkey::from_str(program_defined.clone().unwrap().as_str()).map_err(|_| ProgramError::InvalidArgument)?;        
+        if *program_account.key != account {
+            return Err(ProgramError::InvalidArgument);
+        }
+    }
 
     let data = Data::try_from_slice(instruction_data).map_err(|_| ProgramError::InvalidArgument)?;
 

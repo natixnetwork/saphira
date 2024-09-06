@@ -36,6 +36,8 @@ pub fn deserialize(program_account: &AccountInfo) -> StakePool {
             compound_period: 7,
             forfeit_allow_burn: false,
             forfeit_allow_transfer: false,
+            stake_account: None,
+            program_account: None,
         },
         forfeit_amount: 0,
         provisioned: false

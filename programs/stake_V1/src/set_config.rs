@@ -31,7 +31,7 @@ pub fn set_config(
         Some(c) => {
             if c.instant_penalty > 1f64 || c.instant_penalty < 0f64 {
                 return Err(ProgramError::InvalidArgument);
-            }
+            }            
             staking_pool.config = c;
             staking_pool.provisioned = true;
             serialize(staking_pool, program_account)

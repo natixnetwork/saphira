@@ -17,7 +17,7 @@ use crate::{get_natix_token_id::get_natix_token_id, staking_info::{StakeInfo, St
 pub fn control_user_account(user_account: &AccountInfo) -> ProgramResult {
     let user_token_account = TokenAccount::unpack(&user_account.data.borrow())?;
     
-    msg!("Checking user token account mint address {:?}", user_token_account.mint);
+    msg!("Checking user token account mint address {:?}, {:?}", user_token_account.mint, user_token_account.owner);
         
     if user_token_account.mint != get_natix_token_mint() {
         return Err(ProgramError::IncorrectProgramId);

@@ -28,6 +28,8 @@ mod tests {
                 min_stake_amount: 0,
                 forfeit_allow_burn: false,
                 forfeit_allow_transfer: false,
+                stake_account: None,
+                program_account: None,
             },
             pause: false,
             interests: vec![

@@ -41,6 +41,7 @@ pub fn cancel(mut staking_pool: StakePool, user_account: &AccountInfo, program_a
     }
     
     control_stake_amount(&mut staking_pool, user_account.key.to_bytes(), None)?;
+    control_max_stakers(&staking_pool)?;
 
     serialize(staking_pool, program_account)
 }

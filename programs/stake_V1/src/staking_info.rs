@@ -52,4 +52,6 @@ pub struct Config {
     pub compound_period: u16,
     pub forfeit_allow_burn: bool,
     pub forfeit_allow_transfer: bool,
+    pub stake_account: Option<String>,
+    pub program_account: Option<String>
 }

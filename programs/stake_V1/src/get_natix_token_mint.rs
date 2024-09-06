@@ -19,5 +19,5 @@ use spl_token::state::Account as TokenAccount;
 /// 
 pub fn get_natix_token_mint(
 ) -> Pubkey {    
-    Pubkey::try_from("ExNf43Ktj35K8uhDJHVajdhLT9RnMDuxnsGQoExy2Jv1").unwrap()
+    Pubkey::try_from("FRySi8LPkuByB7VPSCCggxpewFUeeJiwEGRKKuhwpKcX").unwrap()
 }

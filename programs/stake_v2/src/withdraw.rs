@@ -55,8 +55,7 @@ pub fn withdraw<'a>(
     let mut amount: u64 = 0;
     let mut sum_reward: u64 = 0;
     let mut origin_amount: u64 = 0;
-    let mut not_calculated_amount: u64 = 0;
-    let mut penalty_amount: u64 = 0;
+    let mut not_calculated_amount: u64 = 0;    
     let mut forfeit_amount: u64 = 0;
 
     let mut valid_unstakers: Vec<&StakeInfo> = Vec::new();
@@ -69,11 +68,10 @@ pub fn withdraw<'a>(
         if unstaker.instant {
             let penalty = staking_pool.config.instant_penalty.mul(unstaker.amount as f64) as u64;
             amount = amount.checked_add((unstaker.amount.checked_add(reward).expect("Overflow during adding reward").checked_sub(penalty)).unwrap_or(0)).expect("Overflow during summation");
-            forfeit_amount = forfeit_amount.checked_add((penalty.checked_sub(reward)).unwrap_or(0)).expect("Overflow during forfeit summation");
+            forfeit_amount = forfeit_amount.checked_add(penalty).expect("Overflow during forfeit summation");
             valid_unstakers.push(unstaker);
             sum_reward = sum_reward.checked_add(reward).expect("Overflow during reward sumation");
-            origin_amount = origin_amount.checked_add(unstaker.amount).expect("Overflow during origin summation");
-            penalty_amount = penalty_amount.checked_add(penalty).expect("Overflow during penalty summation");
+            origin_amount = origin_amount.checked_add(unstaker.amount).expect("Overflow during origin summation");            
         } else if diff_days >= staking_pool.config.cooldown {
             amount = amount.checked_add(unstaker.amount.checked_add(reward).expect("Overflow during adding reward")).expect("Overflow during summation");
             valid_unstakers.push(unstaker);
@@ -84,7 +82,7 @@ pub fn withdraw<'a>(
         }
     }
 
-    msg!("Withdrawing amount is {:?}, total reward: {:?}, staked amount: {:?}, and needed to be cooled down amount: {:?}, penalty: {:?}, forfeit amount: {:?}", amount, sum_reward, origin_amount, not_calculated_amount, penalty_amount, forfeit_amount);
+    msg!("Withdrawing amount is {:?}, total reward: {:?}, staked amount: {:?}, and needed to be cooled down amount: {:?}, forfeit amount: {:?}", amount, sum_reward, origin_amount, not_calculated_amount, forfeit_amount);
 
     match transfer_token_pda(
         stake_account,
