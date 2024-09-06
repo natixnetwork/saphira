@@ -22,7 +22,9 @@ pub fn control_user_solana_address(user_account: &AccountInfo, user_solana_accou
     
     let address = get_associated_token_address(user_solana_account.key, &get_natix_token_mint());
 
-    if user_account.key != &address || user_account.owner != user_solana_account.key {
+    let user_token_account = TokenAccount::unpack(&user_account.data.borrow())?;
+
+    if user_account.key != &address || user_token_account.owner != *user_solana_account.key {
         return Err(ProgramError::InvalidAccountOwner);
     }
 
