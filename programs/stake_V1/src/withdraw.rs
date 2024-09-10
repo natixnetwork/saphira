@@ -87,6 +87,7 @@ pub fn withdraw<'a>(
     match transfer_token_pda(
         stake_account,
         user_account,
+        &program_account.key,
         token_program_account,
         amount,
         pda_account,

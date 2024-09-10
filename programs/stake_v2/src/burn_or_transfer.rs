@@ -58,6 +58,7 @@ pub fn burn_or_transfer<'a>(
         burn_token_pda(
             stake_account,
             mint_account,
+            &program_account.key,
             token_program_account,
             pool.forfeit_amount,
             pda_account,
@@ -68,6 +69,7 @@ pub fn burn_or_transfer<'a>(
         transfer_token_pda(
             stake_account,
             user_account,
+            &program_account.key,
             token_program_account,
             pool.forfeit_amount,
             pda_account,

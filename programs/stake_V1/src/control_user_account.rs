@@ -16,8 +16,15 @@ use crate::{staking_info::{StakeInfo, StakePool}};
 /// Controls if the address provided for token account is for the token this staking program needs. 
 /// 
 pub fn control_user_account(user_account: &AccountInfo) -> ProgramResult {
-    let user_token_account = TokenAccount::unpack(&user_account.data.borrow())?;
+
+    msg!("Checking user token account owner {:?}", user_account.owner);
     
+    if *user_account.owner != get_natix_token_id() {
+        return Err(ProgramError::InvalidArgument);
+    }
+
+    let user_token_account = TokenAccount::unpack(&user_account.data.borrow())?;    
+
     msg!("Checking user token account mint address {:?}, {:?}", user_token_account.mint, user_token_account.owner);
     
     if user_token_account.mint != get_natix_token_mint() {

@@ -18,9 +18,11 @@ use crate::control_stake_amount::control_stake_amount;
 /// Returns the pda address, this address should be the owner of stake_acount.
 /// So that it can transfer token from stake_account to users' accounts.
 /// 
-pub fn get_pda(program_id: &Pubkey, pda_account: &AccountInfo) -> Result<(Pubkey, u8), ProgramError> {
+pub fn get_pda(program_id: &Pubkey, program_account_pub_key: &Pubkey, pda_account: &AccountInfo) -> Result<(Pubkey, u8), ProgramError> {
     
-    let (pda, bump_seed) = Pubkey::find_program_address(&[b"NATIX"], program_id);
+    let seed = program_account_pub_key.to_bytes();
+
+    let (pda, bump_seed) = Pubkey::find_program_address(&[&seed], program_id);
 
     if pda != *pda_account.key {
         return Err(ProgramError::InvalidAccountData);

@@ -68,13 +68,14 @@ pub fn transfer_token<'a>(
 pub fn transfer_token_pda<'a>(
     sender: &'a AccountInfo<'a>,
     receiver: &'a AccountInfo<'a>,
+    program_account_pub_key: &'a Pubkey, 
     token_program_account: &'a AccountInfo<'a>,
     token_amount: u64,
     pda_account: &'a AccountInfo<'a>,
     program_id: &'a Pubkey,
 ) -> ProgramResult {
-    let (pda, bump_seed) = get_pda(program_id, pda_account)?;
-    let seeds: &[&[u8]] = &[b"NATIX", &[bump_seed]];
+    let (pda, bump_seed) = get_pda(program_id, program_account_pub_key, pda_account)?;
+    let seeds: &[&[u8]] = &[&program_account_pub_key.to_bytes(), &[bump_seed]];
     msg!(
         "Transferring token {:?} from {:?} to {:?}",
         get_natix_token_id(),
@@ -114,13 +115,14 @@ pub fn transfer_token_pda<'a>(
 pub fn burn_token_pda<'a>(
     sender: &'a AccountInfo<'a>,    
     mint_info: &'a AccountInfo<'a>,
+    program_account_pub_key: &'a Pubkey,    
     token_program_account: &'a AccountInfo<'a>,    
     token_amount: u64,
     pda_account: &'a AccountInfo<'a>,
     program_id: &'a Pubkey,
 ) -> ProgramResult {
-    let (pda, bump_seed) = get_pda(program_id, pda_account)?;
-    let seeds: &[&[u8]] = &[b"NATIX", &[bump_seed]];
+    let (pda, bump_seed) = get_pda(program_id, program_account_pub_key, pda_account)?;
+    let seeds: &[&[u8]] = &[&program_account_pub_key.to_bytes(), &[bump_seed]];
     msg!(
         "Burning token {:?} from {:?}",
         get_natix_token_id(),

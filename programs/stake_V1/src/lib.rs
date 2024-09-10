@@ -88,8 +88,14 @@ pub fn process_instruction<'a>(
         return Err(ProgramError::InvalidArgument);
     }
 
+    msg!("Checking stake token account owner {:?}", stake_account.owner);
+
+    if *stake_account.owner != get_natix_token_id() {
+        return Err(ProgramError::InvalidArgument);
+    }
     let stake_token_account = TokenAccount::unpack(&stake_account.data.borrow_mut())?;
-    let (pda, _bump_seed) = Pubkey::find_program_address(&[b"NATIX"], program_id);
+    let seed = program_account.key.to_bytes();
+    let (pda, _bump_seed) = Pubkey::find_program_address(&[&seed], program_id);
     msg!(
         "Checking stake account owner {:?}, {:?}",
         stake_token_account.owner,
@@ -154,6 +160,12 @@ pub fn process_instruction<'a>(
         }
         ProgramInstruction::Config => {
             let authority_account: &'a AccountInfo<'a> = next_account_info(account_info_iter)?;
+            if data.config.is_some() {
+                let mut config = data.config.unwrap();
+                config.stake_account = Some(stake_account.key.to_string());
+                config.program_account = Some(program_account.key.to_string());
+                return set_config(pool, authority_account, program_account, Some(config));
+            }
             return set_config(pool, authority_account, program_account, data.config);
         }
         ProgramInstruction::Stake => {
