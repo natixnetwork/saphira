@@ -48,10 +48,10 @@ pub fn get_reward<'a>(interests: &Vec<Rate>, config: &Config, from: i64, to: i64
         p = p.mul(E.powf(r.mul((clamped as f64).div(365.0))));                
     }
 
-    ((p as u64) - amount).max(0)
+    (p as u64).checked_sub(amount).expect("Couldn't subtract")
 }
 
 pub fn clamped(period: u16, from: i64, to: i64) -> i64 {
     let diff_days: f64 = ((to - from) as f64 / (60.0 * 60.0 * 24.0)) as f64;    
-    (diff_days as u64).div(period as u64).mul(period as u64) as i64
+    (diff_days as u64).checked_div(period as u64).expect("Couldn't divide").checked_mul(period as u64).expect("Couldn't multiply") as i64
 }

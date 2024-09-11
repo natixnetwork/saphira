@@ -34,7 +34,7 @@ pub fn get_reward<'a>(staking_pool: &StakePool, unstaker: &StakeInfo) -> u64 {
     for rate in rates {        
         
         let diff_days: f64 = ((rate.time - t) as f64 / (60.0 * 60.0 * 24.0)) as f64;
-        let clamped = (diff_days as u64).div(staking_pool.config.compound_period as u64).mul(staking_pool.config.compound_period as u64);
+        let clamped = (diff_days as u64).checked_div(staking_pool.config.compound_period as u64).expect("Couldn't divide").checked_mul(staking_pool.config.compound_period as u64).expect("Couldn't multiply");
         if clamped > 0 {            
             p = p.mul(E.powf(r.mul((clamped as f64).div(365.0))));            
             t = rate.time;
@@ -43,11 +43,11 @@ pub fn get_reward<'a>(staking_pool: &StakePool, unstaker: &StakeInfo) -> u64 {
     }
     
     let diff_days: f64 = ((unstaker.unstake_time - t) as f64 / (60.0 * 60.0 * 24.0)) as f64;    
-    let clamped = (diff_days as u64).div(staking_pool.config.compound_period as u64).mul(staking_pool.config.compound_period as u64);
+    let clamped = (diff_days as u64).checked_div(staking_pool.config.compound_period as u64).expect("Couldn't divide").checked_mul(staking_pool.config.compound_period as u64).expect("Couldn't multiply");
     
     if clamped > 0 {
         p = p.mul(E.powf(r.mul((clamped as f64).div(365.0))));                
     }
 
-    ((p as u64) - unstaker.amount).max(0)
+    (p as u64).checked_sub(unstaker.amount).expect("Couldn't subtract")
 }
