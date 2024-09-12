@@ -18,6 +18,6 @@ use spl_token::state::Account as TokenAccount;
 /// The mint address of the Token Program this staking program needs.
 /// 
 pub fn get_natix_token_mint(
-) -> Pubkey {    
+) -> Pubkey {        
     Pubkey::try_from("FRySi8LPkuByB7VPSCCggxpewFUeeJiwEGRKKuhwpKcX").unwrap()
 }
