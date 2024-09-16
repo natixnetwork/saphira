@@ -27,6 +27,6 @@ use crate::{staking_info::Config, ProgramInstruction};
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct Data {
     pub instruction: ProgramInstruction,
-    pub amount: u64,
+    pub amount: f64,
     pub config: Option<Config>
 }
