@@ -178,7 +178,7 @@ pub fn process_instruction<'a>(
                 program_account,
                 stake_account,
                 token_program_account,
-                data.amount as u64,
+                data.amount,
             );
         }
         ProgramInstruction::UnStake => {

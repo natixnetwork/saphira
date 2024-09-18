@@ -35,7 +35,10 @@ pub fn change_interest_rate<'a>(
     control_owner(authority_account)?;
 
     let clock = Clock::get()?;
-    
+
+    if rate < 0.0 {
+        return Err(ProgramError::InvalidArgument);
+    }
 
     pool.interests.push(Rate {
         amount: rate,

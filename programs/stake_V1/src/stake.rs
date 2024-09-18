@@ -23,13 +23,13 @@ use crate::control_stake_amount::control_stake_amount;
 /// 
 pub fn stake<'a>(mut staking_pool: StakePool, user_account: &'a AccountInfo<'a>, authority_account: &'a AccountInfo<'a>, program_account: &'a AccountInfo<'a>,
     stake_account: &'a AccountInfo<'a>, token_program_account: &'a AccountInfo<'a>,
-             token_amount: u64) -> ProgramResult {            
-    msg!("Staking {:?} from user account {:?} to {:?} ", token_amount, user_account.key, stake_account.key);
+             amount: f64) -> ProgramResult {            
+    msg!("Staking {:?} from user account {:?} to {:?} ", amount, user_account.key, stake_account.key);
     control_provisioned(&staking_pool)?;
     control_flow(&staking_pool)?;
     control_user_account(user_account)?;
     control_user_solana_address(user_account, authority_account)?;
-    control_stake_amount(&mut staking_pool, user_account.key.to_bytes(), Some(token_amount))?;
+    let token_amount = control_stake_amount(&mut staking_pool, user_account.key.to_bytes(), Some(amount))?;
     control_max_stakers(&staking_pool)?;
 
     let clock = Clock::get()?;
